@@ -200,29 +200,6 @@ Definition wp_pre `{!irisG Λ AS Σ} (s : stuckness)
                 (fork_post (locale_of (tp1 ++ ectx_fill K e1 :: tp2 ++ (take i efs)) ef))
   end%I.
 
-(* Definition wp_pre `{!irisG Λ AS Σ} (s : stuckness) *)
-(*     (wp : coPset -d> locale Λ -d> expr Λ -d> (val Λ -d> iPropO Σ) -d> iPropO Σ) : *)
-(*     coPset -d> locale Λ -d> expr Λ -d> (val Λ -d> iPropO Σ) -d> iPropO Σ := λ E ζ e1 Φ, *)
-(*   match to_val e1 with *)
-(*   | Some v => |~{E}~| Φ v *)
-(*   | None => ∀ (extr : execution_trace Λ) (atr : auxiliary_trace AS) K tp1 tp2 σ1, *)
-(*       ⌜valid_exec extr⌝ -∗ *)
-(*       ⌜locale_of tp1 (ectx_fill K e1) = ζ⌝ -∗ *)
-(*       ⌜trace_ends_in extr (tp1 ++ ectx_fill K e1 :: tp2, σ1)⌝ -∗ *)
-(*       state_interp extr atr ={E,∅}=∗ *)
-(*        ⌜if s is NotStuck then reducible e1 σ1 else True⌝ ∗ *)
-(*        ∀ e2 σ2 efs, *)
-(*          ⌜prim_step e1 σ1 e2 σ2 efs⌝ ={∅}▷=∗^(S $ trace_length extr) |={∅,E}=> *)
-(*          ∃ δ2 ℓ, *)
-(*            state_interp *)
-(*              (trace_extend extr (Some ζ) (tp1 ++ ectx_fill K e2 :: tp2 ++ efs, σ2)) *)
-(*              (trace_extend atr ℓ δ2) ∗ *)
-(*            wp E ζ e2 Φ ∗ *)
-(*            [∗ list] i ↦ ef ∈ efs, *)
-(*               wp ⊤ (locale_of (tp1 ++ ectx_fill K e1 :: tp2 ++ (take i efs)) ef) ef *)
-(*                 (fork_post (locale_of (tp1 ++ ectx_fill K e1 :: tp2 ++ (take i efs)) ef)) *)
-(*   end%I. *)
-
 #[local] Instance wp_pre_contractive `{!irisG Λ AS Σ} s : Contractive (wp_pre s).
 Proof.
   rewrite /wp_pre=> n wp wp' Hwp E e1 ζ Φ /=.
