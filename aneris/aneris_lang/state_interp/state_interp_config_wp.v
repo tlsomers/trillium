@@ -39,19 +39,18 @@ Section state_interpretation.
   Lemma config_wp_correct : ⊢ config_wp.
   Proof.
     rewrite /config_wp. iModIntro.
-    iIntros (ex atr c σ2 Hexvalid Hex Hstep) "(Hevs & Hsi & Hm & % & Hauth & Hatrace)".
+    iIntros (ex atr c σ2 Hexvalid Hex Hstep) "(Hevs & Hsi & Hm & % & Hatrace)".
     rewrite (last_eq_trace_ends_in ex c); [|done].
     iDestruct "Hsi" as (γm mh)
                          "(%Hhist & %Hgcoh & %Hnscoh & %Hmhcoh &
                            Hnauth & Hsi & Hlcoh & Hfreeips & Hmctx & Hmres)".
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iApply physical_step_intro.
     destruct c as [tp1 σ1]=> /=.
     iExists (trace_last atr), ().
     rewrite (aneris_events_state_interp_same_tp _ (tp1, _));
       [| |done|done]; last first.
     { econstructor; [done| |done]. econstructor 2; eauto. }
-    iFrame "Hm Hevs Hauth Hsi".
+    iFrame "Hm Hevs Hsi".
     iSplitR "Hatrace".
     {
       iExists γm, mh. iFrame.

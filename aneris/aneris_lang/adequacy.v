@@ -230,7 +230,6 @@ Proof.
       "[Hauth HownA]"; [done|].
   iDestruct (socket_address_group_own_big_sepS with "HownA") as "#HownAS".
   iMod (messages_ctx_init A _ _ _ _ with "HownAS Hobserved_send Hobserved_receive" ) as (γms) "[Hms HB]".
-  iMod steps_init as (γsteps) "[Hsteps _]".
   iMod (model_init Mdl.(model_state_initial)) as (γm) "[Hmfull Hmfrag]".
   assert (rtc Mdl Mdl.(model_state_initial) Mdl.(model_state_initial)).
   { constructor. }
@@ -250,7 +249,6 @@ Proof.
            aneris_freeports_name := γpiu;
            aneris_messages_name := γms;
            aneris_model_name := γm;
-           aneris_steps_name := γsteps;
            aneris_allocEVS_name := γalevs;
            aneris_sendonEVS_name := γsendevs;
            aneris_receiveonEVS_name := γreceiveevs;
@@ -270,7 +268,6 @@ Proof.
         (trace_messages_history ex) ∗
       auth_st (trace_last atr) ∗
         ⌜valid_state_evolution ex atr⌝ ∗
-        steps_auth (trace_length ex) ∗
         trace_auth (state_trace ((trace_last ex).2)))%I, (λ _ _, True)%I,
       ((λ φ v, ⌜φ v⌝)%I <$> φs), (λ _ _, True)%I.
   iSplitR; [by rewrite !length_fmap|].
@@ -501,7 +498,6 @@ Proof.
       "[Hauth HownA]"; [done|].
   iDestruct (socket_address_group_own_big_sepS with "HownA") as "#HownAS".
   iMod (messages_ctx_init A _ _ _ _ with "HownAS Hobserved_send Hobserved_receive" ) as (γms) "[Hms HB]".
-  iMod steps_init as (γsteps) "[Hsteps _]".
   iMod (model_init Mdl.(model_state_initial)) as (γm) "[Hmfull Hmfrag]".
   assert (rtc Mdl Mdl.(model_state_initial) Mdl.(model_state_initial)).
   { constructor. }
@@ -521,7 +517,6 @@ Proof.
            aneris_freeports_name := γpiu;
            aneris_messages_name := γms;
            aneris_model_name := γm;
-           aneris_steps_name := γsteps;
            aneris_allocEVS_name := γalevs;
            aneris_sendonEVS_name := γsendevs;
            aneris_receiveonEVS_name := γreceiveevs;
@@ -543,7 +538,6 @@ Proof.
         (trace_messages_history ex) ∗
       auth_st (trace_last atr) ∗
         ⌜valid_state_evolution ex atr⌝ ∗
-        steps_auth (trace_length ex) ∗
         trace_auth (state_trace ((trace_last ex).2)))%I, (λ _ _, True)%I, _, (λ _ _, True)%I.
   iSplitR; [iApply config_wp_correct|].
   iMod (socket_address_group_own_alloc_subseteq_pre _ A obs_send_sas with "Hauth")
@@ -573,7 +567,7 @@ Proof.
   iPoseProof (@aneris_state_interp_init _ _ dg IPs
                with "Hmp [//] Hh Hs Hms [$Hauth $Hown] Hunallocated_auth Hsi HIPsCtx HPiu") as "$"; eauto.
   simpl.
-  iFrame "Hmfull Hsteps Hta".
+  iFrame "Hmfull Hta".
   done.
 Qed.
 
@@ -805,7 +799,6 @@ Proof.
       "[Hauth HownA]"; [done|].
   iDestruct (socket_address_group_own_big_sepS with "HownA") as "HownAS".
   iMod (messages_ctx_init A _ _ _ _ with "HownAS Hobserved_send Hobserved_receive" ) as (γms) "[Hms HB]".
-  iMod steps_init as (γsteps) "[Hsteps _]".
   iMod (model_init Mdl.(model_state_initial)) as (γm) "[Hmfull Hmfrag]".
   assert (rtc Mdl Mdl.(model_state_initial) Mdl.(model_state_initial)).
   { constructor. }
@@ -825,7 +818,6 @@ Proof.
            aneris_freeports_name := γpiu;
            aneris_messages_name := γms;
            aneris_model_name := γm;
-           aneris_steps_name := γsteps;
            aneris_allocEVS_name := γalevs;
            aneris_sendonEVS_name := γsendevs;
            aneris_receiveonEVS_name := γreceiveevs;

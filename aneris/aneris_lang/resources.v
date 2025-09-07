@@ -2,7 +2,7 @@ From stdpp Require Import fin_maps gmap.
 From iris.algebra Require Import auth gmap frac agree coPset
      gset frac_auth ofe excl list.
 From iris.bi.lib Require Import fractional.
-From iris.base_logic.lib Require Import saved_prop invariants mono_nat.
+From iris.base_logic.lib Require Import saved_prop invariants.
 From iris.proofmode Require Import tactics.
 From aneris.lib Require Import gen_heap_light.
 From aneris.aneris_lang Require Export aneris_lang network.
@@ -116,9 +116,6 @@ Class anerisG (Mdl : Model) Σ :=
       (** model *)
       aneris_model_name : gname;
       anerisG_model :: inG Σ (authUR (optionUR (exclR (ModelO Mdl))));
-      (** steps *)
-      aneris_steps_name : gname;
-      anerisG_steps :: mono_natG Σ;
       (** events *)
       anerisG_allocEVS :: inG Σ (authUR (gmapUR string (exclR aneris_eventsO)));
       anerisG_sendreceiveEVS ::
@@ -153,7 +150,6 @@ Class anerisPreG Σ (Mdl : Model) :=
         inG Σ (tracked_socket_address_groupsUR);
       anerisPre_messagesG :: inG Σ (authR messagesUR);
       anerisPre_model :: inG Σ (authUR (optionUR (exclR (ModelO Mdl))));
-      anerisPre_steps :: mono_natG Σ;
       anerisPre_allocEVSG ::
         inG Σ (authUR (gmapUR string (exclR aneris_eventsO)));
       anerisPre_sendreceiveEVSG ::
@@ -181,7 +177,6 @@ Definition anerisΣ (Mdl : Model) : gFunctors :=
    GFunctor (tracked_socket_address_groupsUR);
    GFunctor (authR messagesUR);
    GFunctor (authUR (optionUR (exclR (ModelO Mdl))));
-   mono_natΣ;
    GFunctor (authUR (gmapUR string (exclR aneris_eventsO)));
    GFunctor (authUR (gmapUR socket_address_group (exclR aneris_eventsO)));
    GFunctor (authR (gmapUR nat (agreeR eventO)));
@@ -440,10 +435,6 @@ Section definitions.
              (⌜(sag ∈ As ↔ (send_obs = true)) ∧ (sag ∈ Ar ↔ (receive_obs = true))⌝) ∗
              socket_address_group_own sag ∗
              lmapsto aneris_messages_name sag q mh.
-
-  (** Steps *)
-  Definition steps_auth n := mono_nat_auth_own aneris_steps_name 1 n.
-  Definition steps_lb n := mono_nat_lb_own aneris_steps_name n.
 
   (** Traces *)
   Fixpoint gmap_of_trace {A} (n: nat) (l: list A): gmap nat (agree (leibnizO A)) :=
@@ -814,10 +805,6 @@ Proof.
   { by apply auth_both_valid_2. }
   iExists _. by iFrame.
 Qed.
-
-Lemma steps_init `{anerisPreG Σ Mdl} n :
-  ⊢ |==> ∃ γ, mono_nat_auth_own γ 1 n ∗ mono_nat_lb_own γ n.
-Proof. iApply mono_nat_own_alloc. Qed.
 
 Lemma unallocated_init `{anerisPreG Σ Mdl} (A : gset socket_address_group) :
   ⊢ |==> ∃ γ, own γ (● (GSet A)) ∗
@@ -1773,33 +1760,6 @@ Section resource_lemmas.
     destruct (Hvalid sag1 sag2); [set_solver|set_solver| | ].
     - done.
     - set_solver.
-  Qed.
-
-  Lemma steps_lb_valid n m :
-    steps_auth n -∗ steps_lb m -∗ ⌜m ≤ n⌝.
-  Proof.
-    iIntros "Hauth Hlb".
-    iDestruct (mono_nat_lb_own_valid with "Hauth Hlb") as %[_ H].
-    iPureIntro. lia.
-  Qed.
-
-  Lemma steps_lb_get n :
-    steps_auth n -∗ steps_lb n.
-  Proof. iApply mono_nat_lb_own_get. Qed.
-
-  Lemma steps_lb_le (n n' : nat) :
-    (n' ≤ n)%nat → steps_lb n -∗ steps_lb n'.
-  Proof. intros Hle. by iApply mono_nat_lb_own_le. Qed.
-
-  Lemma steps_auth_update (n n' : nat) :
-    (n ≤ n')%nat → steps_auth n ==∗ steps_auth n' ∗ steps_lb n'.
-  Proof. intros Hle. by iApply mono_nat_own_update. Qed.
-
-  Lemma steps_auth_update_S n :
-    steps_auth n ==∗ steps_auth (S n).
-  Proof.
-    iIntros "Hauth".
-    iMod (mono_nat_own_update with "Hauth") as "[$ _]"; [lia|done].
   Qed.
 
   (** Traces *)

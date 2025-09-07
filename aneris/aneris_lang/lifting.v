@@ -278,14 +278,12 @@ Section primitive_laws.
     AllowsStuttering (aneris_to_trace_model Mdl) Σ.
   Proof.
     refine ({| stuttering_label := () |}).
-
-    iIntros (ex atr c δ ? ? Hval Hc Hδ) "(? & ? & ? & ? & Hauth & ?)".
+    iIntros (ex atr c δ ? ? Hval Hc Hδ) "(? & ? & ? & ? & ?)".
     rewrite /state_interp /=.
     rewrite (last_eq_trace_ends_in ex c) //=.
     rewrite (last_eq_trace_ends_in atr δ) //=.
     rewrite aneris_events_state_interp_same_tp; [| |done|done]; last first.
     { eapply extend_valid_exec; eauto. }
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro.
     rewrite -message_history_evolution_id; iFrame.
     iPureIntro; apply user_model_evolution_id.
@@ -296,13 +294,12 @@ Section primitive_laws.
   Proof.
     refine ({| pure_label := () |}).
 
-    iIntros (ex atr tp tp' σ δ ? ? ? Hex Hδ) "(?&?&?&?&Hauth&?)".
+    iIntros (ex atr tp tp' σ δ ? ? ? Hex Hδ) "(?&?&?&?&?)".
     rewrite /state_interp /=.
     rewrite (last_eq_trace_ends_in ex (tp, σ)) //=.
     rewrite (last_eq_trace_ends_in atr δ) //=.
     rewrite aneris_events_state_interp_pure; [| |done|done]; last first.
     { eapply extend_valid_exec; eauto. }
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro.
     rewrite -message_history_evolution_id; iFrame.
     iPureIntro; apply user_model_evolution_id.
@@ -313,7 +310,7 @@ Section primitive_laws.
     WP (mkExpr n (Fork e)) @ k; (n, tid); E {{ Φ }}.
   Proof.
     iIntros "[HΦ He]". iApply wp_lift_atomic_head_step; [done|].
-    iIntros (ex atr K tp1 tp2 σ1 Hexvalid Hex Hlocale) "(?&?&?&%&Hauth&?) !>".
+    iIntros (ex atr K tp1 tp2 σ1 Hexvalid Hex Hlocale) "(?&?&?&%&?) !>".
     iSplit.
     - iPureIntro. solve_exec_safe.
     - iIntros (e2 σ2 efs Hstep).
@@ -324,7 +321,6 @@ Section primitive_laws.
       rewrite (last_eq_trace_ends_in _ _ Hex).
       iExists (trace_last atr), ().
       iIntros "!>".
-      iMod (steps_auth_update_S with "Hauth") as "Hauth".
       iIntros "!>". iFrame.
       rewrite ectx_language.locale_fill /= Hlocale // in Hval.
       rewrite aneris_events_state_interp_pure; [|done|done|done].
@@ -347,7 +343,7 @@ Section primitive_laws.
   Proof.
     iIntros (Φ) "[>Hn Haevs] HΦ".
     iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (is_node_heap_valid with "Hσ Hn") as (h) "%".
     iSplitR; [by iPureIntro; do 3 eexists; eapply LocalStepS; eauto | ].
@@ -361,8 +357,6 @@ Section primitive_laws.
       [done|done|done| |].
       { eexists _, _, _, _; eauto. }
       iExists (trace_last atr), ().
-      iMod (steps_auth_update _ (S (trace_length ex)) with "Hauth")
-        as "[Hauth _]"; [by eauto|].
       iIntros "!>".
       rewrite -message_history_evolution_id; iFrame.
       iSplit; [done|].
@@ -373,7 +367,6 @@ Section primitive_laws.
         [|done|done|done|done|done].
       inv_head_step. iNext.
       iMod (aneris_state_interp_alloc_heap with "Hn Hσ") as "[Hσ Hl]"; [done..|].
-      iMod (steps_auth_update_S with "Hauth") as "Hauth".
       iExists (trace_last atr), (). iIntros "!>".
       rewrite -message_history_evolution_id Htrig; iFrame.
       iSplit; [done|].
@@ -411,7 +404,7 @@ Section primitive_laws.
     {{{ RET (mkVal n v); l ↦[n]{q} v }}}.
   Proof.
     iIntros (Φ) ">Hl HΦ". iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_heap_valid with "Hσ Hl") as (h) "[% %]".
     iSplit.
@@ -422,7 +415,6 @@ Section primitive_laws.
       [|done|done|done|done|done].
     inv_head_step. iNext.
     rewrite insert_id //. rewrite insert_id //= in Htrig.
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     destruct σ; iFrame. iModIntro. iExists ().
     rewrite -message_history_evolution_id Htrig; iFrame.
     iSplit; [done|].
@@ -436,7 +428,7 @@ Section primitive_laws.
     {{{ RET (mkVal n #()); l ↦[n] v2 }}}.
   Proof. 
     iIntros (Φ) ">Hl HΦ". iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_heap_valid with "Hσ Hl") as (h) "[% %]".
     iSplit. { iPureIntro; do 3 eexists. eapply LocalStepS; eauto. econstructor. eauto. }
@@ -447,7 +439,6 @@ Section primitive_laws.
     inv_head_step. iNext.
     iMod (aneris_state_interp_heap_update with "[$Hσ $Hl]") as "[Hσ Hl]";
       [done|].
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro. iExists (trace_last atr), ().
     rewrite -message_history_evolution_id Htrig; iFrame.
     iSplit; first done.
@@ -463,7 +454,7 @@ Section primitive_laws.
   Proof.
     iIntros (Heq Φ) ">Hl HΦ".
     iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_heap_valid with "Hσ Hl") as (h) "[% %]".
     iSplit.
@@ -474,7 +465,6 @@ Section primitive_laws.
       [|done|done|done|done|done].
      inv_head_step. iNext.
     rewrite insert_id //. rewrite insert_id // in Htrig.
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     destruct σ; iFrame. iModIntro.
     iExists ().
     rewrite -message_history_evolution_id Htrig; iFrame.
@@ -489,7 +479,7 @@ Section primitive_laws.
     {{{ RET (mkVal n #true); l ↦[n] v2 }}}.
   Proof.
     iIntros (Φ) ">Hl HΦ". iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_heap_valid with "Hσ Hl") as (h) "[% %]".
     iSplit.
@@ -501,7 +491,6 @@ Section primitive_laws.
     inv_head_step. iNext.
     iMod (aneris_state_interp_heap_update with "[$Hσ $Hl]") as "[Hσ Hl]";
       [done|].
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro. iExists (trace_last atr), ().
     rewrite -message_history_evolution_id Htrig; iFrame.
     iSplit; first done.
@@ -515,7 +504,7 @@ Section primitive_laws.
     {{{ (r : Z), RET (mkVal n #r); ⌜(r >= 0) ∧ (r < u)⌝%Z }}}.
   Proof.
     iIntros (Φ) "(> #Hin & %Hm) HΦ". iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & %Hve & Hsteps & ?) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & %Hve & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (is_node_heap_valid with "Hσ Hin") as (h) "%Hlookup". simpl in Hlookup.
     iSplit.
@@ -525,7 +514,6 @@ Section primitive_laws.
     pose proof Hex as Htrig.
     eapply aneris_events_state_interp_no_triggered in Htrig; eauto.
     inv_head_step. iNext.
-    iMod (steps_auth_update_S with "Hsteps") as "Hsteps".
     iModIntro. iExists (trace_last atr), ().
     iSplit; [done|].
     (* iSplit; [ iPureIntro; apply user_model_evolution_id |]. *)
@@ -547,7 +535,7 @@ Section primitive_laws.
   Proof.
     iIntros "(>Hnode & >Hfip & HΦ & Hwp)".
     iApply (wp_lift_head_step with "[-]"); first auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex) "(Hevs & Hσ & Hm & % & Hauth & ?) /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex) "(Hevs & Hσ & Hm & % & ?) /=".
     iDestruct (is_node_heap_valid with "Hσ Hnode") as %[h Hsome].
     iDestruct (aneris_state_interp_free_ip_valid with "Hσ Hfip") as %[Hnone _].
     rewrite (last_eq_trace_ends_in _ _ Hex).
@@ -564,7 +552,6 @@ Section primitive_laws.
     inv_head_step.
     iMod (aneris_state_interp_alloc_node _ _ ports with "[$]")
       as "(%Hcoh & Hn & Hports & Hσ)".
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro.
     simplify_eq /=.
     iExists (trace_last atr), ().
@@ -583,7 +570,7 @@ Section primitive_laws.
   Proof.
     iIntros (Φ) ">Hn HΦ".
     iApply wp_lift_atomic_head_step_no_fork; first auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (is_node_valid_sockets with "Hσ Hn") as (?) "%".
     iSplitR.
@@ -599,7 +586,6 @@ Section primitive_laws.
     inv_head_step. iNext.
     iMod (aneris_state_interp_alloc_socket sock with "Hn Hσ")
       as "[Hσ Hsh]"; try done.
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro.
     iExists (trace_last atr), ().
     rewrite -message_history_evolution_new_socket; [|done|done].
@@ -623,7 +609,7 @@ Section primitive_laws.
     iIntros (? Φ) "(>Hp & >Hsh) HΦ".
     iApply wp_lift_atomic_head_step_no_fork; first auto.
     iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale)
-            "(Hevs & Hσ & Hm & % & Hauth & ?) !> /=".
+            "(Hevs & Hσ & Hm & % & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_socket_valid with "Hσ Hsh")
       as (Sn r) "[%HSn (%Hr & %Hreset)]". 
@@ -640,7 +626,6 @@ Section primitive_laws.
     inv_head_step.
     iMod (aneris_state_interp_socketbind with "Hσ Hsh Hp")
       as "(Hσ & Hsh)"; [set_solver..|].
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro.
     iExists (trace_last atr), ().
     rewrite -message_history_evolution_socketbind; [|done|done].
@@ -663,7 +648,7 @@ Section primitive_laws.
     iIntros (? Φ) "(>Hp & >Hsh) HΦ".
     iApply wp_lift_atomic_head_step_no_fork; first auto.
     iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale)
-            "(Hevs & Hσ & Hm & % & Hauth & ?) !> /=".
+            "(Hevs & Hσ & Hm & % & ?) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_socket_valid with "Hσ Hsh")
       as (Sn r) "[%HSn (%Hr & %Hreset)]".
@@ -680,7 +665,6 @@ Section primitive_laws.
     inv_head_step.
     iMod (aneris_state_interp_socketbind with "Hσ Hsh Hp")
       as "(Hσ & Hsh)"; [set_solver..|].
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro.
     iExists (trace_last atr), ().
     rewrite -message_history_evolution_socketbind; [|done|done].
@@ -725,8 +709,7 @@ Section primitive_laws.
                else (∃ m', ⌜msg ≡g{sagT,sagR} m'⌝ ∗ sagR ⤇* φ ∗ φ m'))%I with "[Hmsg]" as "Hmsg".
     { destruct is_dup; iNext; done. }
     iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) /=".
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & ?) /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_socket_valid with "Hσ Hsh")
       as (Sn r) "[%HSn (%Hr & %Hreset)]".
@@ -1130,8 +1113,7 @@ Section primitive_laws.
     iDestruct (elem_of_group_unfold with "HinR") as "[%HsagR _]".
     iLöb as "IH".
     iApply wp_lift_head_step; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex) "(Hevs & Hσ & Hm & % & Hauth & ?) /=".
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex) "(Hevs & Hσ & Hm & %  & ?) /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_socket_valid with "Hσ Hsh")
       as (Sn r) "[%HSn (%Hr & %Hreset)]".
@@ -1335,8 +1317,7 @@ Section primitive_laws.
     iIntros (Hskt Φ) "(>Hsh & >Hrt & #HΨ & Htrck) HΦ /=".
     iLöb as "IH".
     iApply wp_lift_head_step; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex) "(Hevs & Hσ & Hm & % & Hauth & ?) /=".
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex) "(Hevs & Hσ & Hm & %  & ?) /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_socket_valid with "Hσ Hsh")
       as (Sn r) "[%HSn (%Hr & %Hreset)]".
@@ -2184,8 +2165,7 @@ Section primitive_laws.
   Proof.
     iIntros (??? Φ) ">Hsh HΦ".
     iApply wp_lift_atomic_head_step_no_fork; first auto.
-    iIntros (ex atr K tp1 tp2 σ1 Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) /=".
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
+    iIntros (ex atr K tp1 tp2 σ1 Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & %  & ?) /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_socket_valid with "Hσ Hsh")
       as (Sn r) "[%HSn (%Hr & %Hreset)]".
@@ -2222,8 +2202,7 @@ Section primitive_laws.
   Proof.
     iIntros (?? Φ) ">Hsh HΦ".
     iApply wp_lift_atomic_head_step_no_fork; first auto.
-    iIntros (ex atr K tp1 tp2 σ1 Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & ?) /=".
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
+    iIntros (ex atr K tp1 tp2 σ1 Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & %  & ?) /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iDestruct (aneris_state_interp_socket_valid with "Hσ Hsh")
       as (Sn r) "[%HSn (%Hr & %Hreset)]".
@@ -2256,7 +2235,7 @@ Section primitive_laws.
   Proof.
     iIntros (Hl HI Φ) "[Ht Hi] HΦ".
     iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & Htrace) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & %  & Htrace) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     iSplit.
     { iPureIntro. do 3 eexists. apply EmitStepS; eauto. }
@@ -2273,7 +2252,6 @@ Section primitive_laws.
     iMod (trace_add_event with "Htrace Ht Htr'") as "(Htrace & Ht & Htr')".
     iMod ("Hclose" with "[Htr']"). 
     { iNext. eauto. }
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro.
     simplify_eq /=.
     iExists _, ().
@@ -2292,7 +2270,7 @@ Section primitive_laws.
   Proof.
     iIntros (Hl HI Φ) "[Ht Hi] HΦ".
     iApply wp_lift_atomic_head_step_no_fork; auto.
-    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & % & Hauth & Htrace) !> /=".
+    iIntros (ex atr K tp1 tp2 σ Hexvalid Hex Hlocale) "(Hevs & Hσ & Hm & %  & Htrace) !> /=".
     rewrite (last_eq_trace_ends_in _ _ Hex).
     pose proof (infinite_is_fresh (tags (state_trace σ))).
     iSplit.
@@ -2310,7 +2288,6 @@ Section primitive_laws.
     iMod (trace_add_event with "Htrace Ht Htr'") as "(Htrace & Ht & Htr')".
     iMod ("Hclose" with "[Htr']"). 
     { iNext. eauto. }
-    iMod (steps_auth_update_S with "Hauth") as "Hauth".
     iModIntro.
     simplify_eq /=.
     iExists _, ().
