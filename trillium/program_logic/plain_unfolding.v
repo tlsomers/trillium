@@ -284,23 +284,22 @@ Section plain_unfolding.
     iIntros (Hfupd).
     iApply (fupd_to_bupd_soundness hlc).
     iIntros (Hinv) "Hlc Hfupd".
-    iMod (tr_supply_alloc 0) as "(%Htr & Hsup & H⧗)"; simpl.
+    iMod (tr_supply_alloc 0) as "(%Htr & Hsup)"; simpl.
     iApply ( @Hfupd _ _ with "[$] [$]").
-    assert (NonExpansive (λ n, tr_supply (physical_step.tr_per_step 0 n))%I).
+    assert (NonExpansive (λ n, tr_supply (physical_step.tr_per_step 0 n) 0 0)%I).
     { intros ????; repeat f_equiv; eauto. }
     iApply (greatest_fixpoint_coiter _
-      (λ n, tr_supply (physical_step.tr_per_step 0 n))%I with "[] [Hsup]"); [|iFrame].
+      (λ n, tr_supply (physical_step.tr_per_step 0 n) 0 0)%I with "[] [Hsup]"); [|iFrame].
     iIntros "!>" (n) "Htr". rewrite /physical_step_to_laters_aux.
-    iIntros (P ? ? m E) "HE Hlc HP". rewrite physical_step.physical_step_unseal /physical_step_def.
-    unfold step_count. rewrite -assoc (comm _ _ m) assoc bi.laterN_add.
+    iIntros (P ? ? m E) "HE Hlc HP".
+    rewrite comm assoc (comm _ m) bi.laterN_add.
     iApply (le_upd_if_to_bupd_use with "[$]"). iIntros "Hlc !> %k Hlc'".
+    iDestruct (physical_step.physical_step_soundness with "[$] [$] [$]") as "HP".
     iApply (fupd_to_bupd_except0_plain with "[$] [$]").
     iMod "HP". clear k. iIntros "!> %k Hle HE".
-    iMod tr_zero as "H⧗". iMod (tr_persistent_zero) as "H⧖".
-    iSpecialize ("HP" $! _ _ _ with "[$] [$] [$] [$]").
     rewrite -bi.later_laterN -bi.laterN_add (comm _ k).
     iApply (bar with "[$] [$]"). iApply (step_fupdN_wand with "[$]").
-    clear k. iIntros "(Hsup&_&_&_&HP) HE %k Hle".
+    clear k. iIntros "(Hsup&HP) HE %k Hle".
     iApply (fupd_to_bupd_except0_plain with "[$] [$]"). iMod "HP".
     clear k. iIntros "!> %k Hle HE".
     iApply ("HP" with "[$] [$] [$]").
