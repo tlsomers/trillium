@@ -2,16 +2,16 @@
 -Q fairis trillium.fairness
 -Q aneris aneris
 
--Q external/stdpp/stdpp stdpp
--Q external/stdpp/stdpp_unstable stdpp.unstable
--Q external/iris/iris iris
--Q external/iris/iris_deprecated iris.deprecated
--Q external/iris/iris_unstable iris.unstable
--Q external/iris/iris_heap_lang iris.heap_lang
--Q external/record-update/src RecordUpdate
--Q external/paco/src Paco
--Q external/actris/actris actris
--Q external/actris/multris multris
+#By Opam# -Q external/stdpp/stdpp stdpp
+#By Opam# -Q external/stdpp/stdpp_unstable stdpp.unstable
+#By Opam# -Q external/iris/iris iris
+#By Opam# -Q external/iris/iris_deprecated iris.deprecated
+#By Opam# -Q external/iris/iris_unstable iris.unstable
+#By Opam# -Q external/iris/iris_heap_lang iris.heap_lang
+#By Opam# -Q external/record-update/src RecordUpdate
+#By Opam# -Q external/paco/src Paco
+#By Opam# -Q external/actris/actris actris
+#By Opam# -Q external/actris/multris multris
 
 -arg -w -arg -notation-overridden
 -arg -w -arg -redundant-canonical-projection

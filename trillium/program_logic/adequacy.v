@@ -1,10 +1,9 @@
 From stdpp Require Import finite.
 From iris.algebra Require Import gmap auth agree gset coPset.
 From iris.bi.lib Require Import fixpoint_banach fixpoint_mono.
-From iris.base_logic.lib Require Import wsat later_credits.
+From iris.base_logic.lib Require Import wsat later_credits plain_unfolding.
 From iris.proofmode Require Import tactics.
 From trillium.prelude Require Import quantifiers iris_extraction finitary classical_instances.
-From trillium.program_logic Require Import plain_unfolding.
 From trillium.program_logic Require Export weakestpre traces.
 
 Set Default Proof Using "Type".

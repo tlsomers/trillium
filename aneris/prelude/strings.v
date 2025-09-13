@@ -211,12 +211,11 @@ Proof.
     pose proof (append_correct1 "-" (pretty (N.pos p)) 0 Hneq) as Hf;
       simpl in Heq.
     rewrite Heq in Hf; inversion Hf; subst.
-Admitted.
-(*     (* rewrite -(@string_app_inj "-" (pretty (N.pos p)) s Heq). *) *)
-(*     pose proof (ZOfString'_inv (Pos.to_nat p)) as HZSi. *)
-(*     rewrite positive_nat_Z in HZSi. *)
-(*     by rewrite HZSi nat_N_Z positive_nat_Z. *)
-(* Qed. *)
+    rewrite -(String.app_inj "-" (pretty (N.pos p)) s Heq).
+    pose proof (ZOfString'_inv (Pos.to_nat p)) as HZSi.
+    rewrite positive_nat_Z in HZSi.
+    by rewrite HZSi nat_N_Z positive_nat_Z.
+Qed.
 
 Lemma append_nil_l s :
   "" +:+ s = s.

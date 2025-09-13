@@ -124,28 +124,6 @@ Section Global_Invariant.
       iSplitL "HlogL"; by iApply own_mono.
   Qed.
 
-  (* TODO: Remove *)
-  (* Lemma Obs_snoc_time_holds a h1 e1 h2 E : *)
-  (*   nclose DB_InvName ⊆ E → *)
-  (*   own_obs γL a (h1 ++ [e1] ++ h2) ={E}=∗ *)
-  (*   ⌜∀ e0, e0 ∈ h1 → e0 <ₜ e1⌝ ∧ ⌜∀ e2, e2 ∈ h2 → e1 <ₜ e2⌝. *)
-  (* Proof. Admitted. *)
-
-  (* Todo: Remove *)
-  (* Lemma Obs_ext_we_holds a a' h h' E : *)
-  (*   nclose DB_InvName ⊆ E → *)
-  (*   Global_Inv ⊢ own_obs γL a h -∗ own_obs γL a' h' ={E}=∗ *)
-  (*   ⌜∀ e e', e ∈ h → e' ∈ h' → e =ₜ e' → e = e'⌝. *)
-  (* Proof. Admitted. *)
-
-  (* TODO: Remove *)
-  (* Lemma Obs_ext_hist_holds a1 a2 h1 h2 k E : *)
-  (*   nclose DB_InvName ⊆ E → *)
-  (*   at_key k h1 = at_key k h2 → *)
-  (*   Global_Inv ⊢ own_obs γL a1 h1 -∗ own_obs γL a2 h2 ={E}=∗ *)
-  (*   ⌜hist_at_key k h1 = hist_at_key k h2⌝. *)
-  (* Proof. Admitted. *)
-
   (* TODO: Used ad-hoc outside API: fix? *)
   Lemma OwnMemKey_wo_obs_holds k q wo E :
     nclose DB_InvName ⊆ E →
@@ -287,17 +265,6 @@ Section Global_Invariant.
     apply hist_at_key_empty_at_key.
     apply (at_key_not_in_app _ _ fr); done.
   Qed.
-
-  (* TODO: Remove *)
-  (* Lemma OwnMemKey_allocated_holds k q h0 h1 we0 E : *)
-  (*   nclose DB_InvName ⊆ E → *)
-  (*   h0 ≤ₚ h1 → *)
-  (*   at_key k h0 = Some we0 → *)
-  (*   Global_Inv ⊢ *)
-  (*   own_mem_user γM k q (at_key k h1) ={E}=∗ *)
-  (*   ∃ we1, own_mem_user γM k q (at_key k h1) ∗ *)
-  (*            ⌜at_key k h1 = Some we1⌝ ∗ ⌜we0 ≤ₜ we1⌝. *)
-  (* Proof. Admitted. *)
 
   (* TODO: Used ad hoc outside of API: fix? *)
   Lemma Obs_we_serializable a h E we :
