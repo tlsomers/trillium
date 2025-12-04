@@ -412,7 +412,7 @@ Proof.
   iIntros (v) "[%w [H HΦ]] HP". iDestruct ("HΦ" with "HP") as "HΦ".
   iFrame.
 Qed.
-Lemma aneris_wp_trp_update ip n E e Φ :
+Lemma aneris_wp_trp_update {f} `{genInG Σ f} ip n E e Φ :
   TCEq (to_val e) None →
   ⧖ n -∗
   WP e @[ip] E {{ v, ⧖ (f $ S $ n) -∗ Φ v }} -∗
@@ -427,7 +427,7 @@ Proof.
   iIntros (v) "[%w [H HΦ]] HP". iDestruct ("HΦ" with "HP") as "HΦ".
   iFrame.
 Qed.
-Lemma aneris_wp_tr_use ip n E e Φ :
+Lemma aneris_wp_tr_use {f} `{genInG Σ f} ip n E e Φ :
   TCEq (to_val e) None →
   ⧗ n -∗
   WP e @[ip] E {{ v, ⧗ (f n) -∗ £ (f n) -∗ Φ v }} -∗

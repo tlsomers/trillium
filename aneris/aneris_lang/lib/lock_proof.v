@@ -8,7 +8,7 @@ From aneris.aneris_lang Require Import lang tactics proofmode.
 Class lockG Σ := LockG { lock_tokG :: inG Σ (exclR unitO) }.
 Definition lockΣ : gFunctors := #[GFunctor (exclR unitO)].
 
-#[local] Instance subG_lockΣ {Σ} : subG lockΣ Σ → lockG Σ.
+Global Instance subG_lockΣ {Σ} : subG lockΣ Σ → lockG Σ.
 Proof. solve_inG. Qed.
 
 Section proof.

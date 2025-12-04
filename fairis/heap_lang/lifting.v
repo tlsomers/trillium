@@ -28,11 +28,6 @@ Class heapGS Σ `(LM:LiveModel heap_lang M) := HeapG {
   #[global] heap_fairnessGS :: fairnessGS LM Σ;
 }.
 
-Program Definition heap_trGen : tr_generation := {|
-  f x := x;
-|}.
-Final Obligation. intros; simpl; lia. Qed.
-
 Definition heapΣ (M : FairModel) : gFunctors :=
   #[ invΣ; gen_heapΣ loc val; fairnessΣ heap_lang M; trΣ ].
 
@@ -43,7 +38,6 @@ Proof. solve_inG. Qed.
 #[global] Instance heapG_irisG `{LM:LiveModel heap_lang M} `{!heapGS Σ LM} : irisG heap_lang LM Σ := {
     iris_invGS := heap_invGS;
     iris_trGS := heap_trGS;
-    iris_trGen := heap_trGen;
     state_interp extr auxtr :=
       (⌜valid_state_evolution_fairness extr auxtr⌝ ∗
        gen_heap_interp (trace_last extr).2.(heap) ∗

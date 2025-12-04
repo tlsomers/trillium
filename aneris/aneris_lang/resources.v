@@ -158,11 +158,6 @@ Class anerisPreG Σ (Mdl : Model) :=
       anerisPre_traceG :: inG Σ (frac_authR (agreeR traceO));
     }.
 
-Program Definition aneris_trGen : tr_generation := {|
-  f x := x;
-|}.
-Final Obligation. intros; simpl; lia. Qed.
-
 Definition anerisΣ (Mdl : Model) : gFunctors :=
   #[invΣ;
    GFunctor (authR node_gnames_mapUR);

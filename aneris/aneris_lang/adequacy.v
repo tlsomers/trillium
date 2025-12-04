@@ -783,7 +783,6 @@ Proof.
   split; [|done].
   eapply continued_simulation_impl; [|done].
   by intros ? ? [? ?]. Unshelve.
-  { apply aneris_trGen. }
   iIntros (??) "".
   iMod node_gnames_auth_init as (γmp) "Hmp".
   iMod saved_si_init as (γsi) "[Hsi Hsi']".

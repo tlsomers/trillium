@@ -13,10 +13,6 @@ Set Default Proof Using "Type".
 (** Note that this file does not import user params, i.e.
     the definitions below are independent w.r.t. concrete physical/logical user parameters.  *)
 
-(* TODO: Move this somewhere else *)
-Instance aneris_proto_f_linear `{!anerisG Mdl Σ} : proto_f_linear.
-Proof. done. Qed.
-
 (** Meta tokens tracking connection between physical data and ghost names. *)
 Section KnownSessions.
   Context `{!anerisG Mdl Σ, !chanG Σ, !server_ghost_names}.

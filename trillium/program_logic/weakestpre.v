@@ -8,7 +8,6 @@ Class irisG (Λ : language) (M : Model) (Σ : gFunctors) := IrisG {
   #[global] iris_invGS :: invGS_gen HasLc Σ;
 
   #[global] iris_trGS :: trGS Σ;
-  #[global] iris_trGen :: tr_generation;
 
   (** The state interpretation is an invariant that should hold in between each
   step of reduction. Here [Λstate] is the global state, [list Λobservation] are
@@ -583,7 +582,7 @@ Qed.
 
    See the statement of [wp_step_fupdN] below to understand the use of
    ordinary conjunction here. *)
-Lemma wp_step_fupdN_strong n s ζ E1 E2 e P Φ :
+Lemma wp_step_fupdN_strong {f} `{genInG Σ f} n s ζ E1 E2 e P Φ :
   TCEq (to_val e) None → E2 ⊆ E1 →
   (∀ extr atr, state_interp extr atr ={E1,∅}=∗ ⧖ n) ∧
   ((|={E1,E2}=> |={∅}▷=>^(S (f n)) |={E2,E1}=> P) ∗
@@ -606,7 +605,7 @@ Proof.
   iIntros (v) "HΦ". iApply ("HΦ" with "HP").
 Qed.
 
-Lemma wp_step_fupdN n s ζ E1 E2 e P Φ :
+Lemma wp_step_fupdN {f} `{genInG Σ f} n s ζ E1 E2 e P Φ :
   TCEq (to_val e) None → E2 ⊆ E1 →
   (∀ extr atr, state_interp extr atr ={E1,∅}=∗ ⧖ n) ∧
   ((|={E1∖E2,∅}=> |={∅}▷=>^(S $ f n) |={∅,E1∖E2}=> P) ∗
@@ -631,7 +630,7 @@ Proof.
   iApply (wp_step_fupdN_strong 0 _ _ E1 E2 with "[-]"); [done|..]. iSplit.
   - iIntros (??) "_". iMod (fupd_mask_subseteq ∅) as "_"; [set_solver+|].
     by iMod tr_persistent_zero as "$".
-  - iFrame "H". rewrite f_zero. by iMod "HR" as "$".
+  - iFrame "H". rewrite genFun_zero. by iMod "HR" as "$".
 Qed.
 
 Lemma pre_step_wp_pre_step s E ζ e Φ :
@@ -832,7 +831,7 @@ Proof.
   by rewrite difference_diag_L.
 Qed.
 
-Lemma wp_trp_update s n E ζ e Φ :
+Lemma wp_trp_update {f} `{genInG Σ f} s n E ζ e Φ :
   TCEq (to_val e) None →
   ⧖ n -∗
   WP e @ s; ζ; E {{ v, ⧖ (f $ S $ n) -∗ Φ v }} -∗
@@ -843,7 +842,7 @@ Proof.
   iApply (step_update_lb_update with "[$]").
 Qed.
 
-Lemma wp_tr_use s n E ζ e Φ :
+Lemma wp_tr_use {f} `{genInG Σ f} s n E ζ e Φ :
   TCEq (to_val e) None →
   ⧗ n -∗
   WP e @ s; ζ; E {{ v, ⧗ (f n) -∗ £ (f n) -∗ Φ v }} -∗

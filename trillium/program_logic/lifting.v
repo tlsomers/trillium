@@ -94,8 +94,7 @@ Proof.
   iIntros "H£ H⧗".
   iMod ("Hwp" with "[//] [//] [//] Hσ") as "[% Hwp]".
   iMod ("Hwp" with "[//]") as "Hwp".
-  iModIntro. rewrite f_zero.
-  iIntros "!>!>!>". done.
+  by repeat iModIntro.
 Qed.
 
 Lemma wp_lift_stuck E Φ e ζ:

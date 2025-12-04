@@ -43,5 +43,5 @@ Definition SpecChanΣ : gFunctors :=
      lockΣ
     ].
 
-#[global] Instance subG_SPecChanΣ {Σ} : subG SpecChanΣ Σ → SpecChanG Σ.
-Proof. econstructor; solve_inG. Qed.
+Global Instance subG_SPecChanΣ {Σ} : subG SpecChanΣ Σ → SpecChanG Σ.
+Proof. solve_inG. Qed.

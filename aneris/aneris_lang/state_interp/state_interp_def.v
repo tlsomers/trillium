@@ -287,7 +287,6 @@ Section Aneris_AS.
     irisG aneris_lang M Σ := {
     iris_invGS := _;
     iris_trGS := aneris_trGS;
-    iris_trGen := aneris_trGen;
     state_interp ex atr :=
       (aneris_events_state_interp ex ∗
        aneris_state_interp
